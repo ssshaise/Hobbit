@@ -33,10 +33,14 @@ git clone [https://github.com/YOUR_USERNAME/YOUR_REPO.git](https://github.com/YO
 cd YOUR_REPO
 ```
 # Install Frontend dependencies
+```bash
 npm install
+```
 
 # Install Python dependencies
+```bash
 pip install fastapi uvicorn sqlmodel twilio pyinstaller
+```
 
 ### 3. Running in Development
 To run the app with hot-reloading:
