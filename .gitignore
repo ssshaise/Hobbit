@@ -1,0 +1,19 @@
+# Node
+node_modules/
+dist/
+
+# Rust/Tauri
+src-tauri/target/
+src-tauri/binaries/
+src-tauri/gen/
+
+# Python
+__pycache__/
+build/
+dist/
+*.spec
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
