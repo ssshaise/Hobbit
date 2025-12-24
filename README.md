@@ -58,7 +58,7 @@ Move dist/api.exe to that folder.
 
 Rename it to match your target triple (e.g., api-x86_64-pc-windows-msvc.exe).
 
-Compile App: ```bash npx tauri build ```
+Compile App: ``` npx tauri build ```
 
 The installer will be located in src-tauri/target/release/bundle/nsis/.
 
