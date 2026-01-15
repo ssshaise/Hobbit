@@ -4,12 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Zap, Trash2, X, User, Target, BarChart2, Plus, Terminal, Bot, Activity } from 'lucide-react';
 
-// --- IMPORT TITLE BAR ---
 import TitleBar from './components/TitleBar';
 
 const API_URL = "http://localhost:8000";
 
-// --- CUSTOM TARGET ICON (The "Good Logo") ---
 const TargetLogo = () => (
   <svg 
     width="20" 
@@ -28,14 +26,12 @@ const TargetLogo = () => (
   </svg>
 );
 
-// --- REUSABLE COMPONENTS ---
 const GlassCard = ({ children, className = "" }) => (
   <div className={`bg-gray-900/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] ${className}`}>
     {children}
   </div>
 );
 
-// --- COMPANION PANEL (SIDEBAR) ---
 const CompanionPanel = ({ completionRate = 0, weeklyProgress = 0, weeklyCount = 0, weeklyTarget = 15 }) => {
   const getMood = () => {
     if (completionRate >= 80) return { color: "text-green-400", border: "border-green-500", shadow: "shadow-green-500/50", msg: "OPTIMAL EFFICIENCY", sub: "System running at peak performance." };
@@ -47,16 +43,13 @@ const CompanionPanel = ({ completionRate = 0, weeklyProgress = 0, weeklyCount = 
 
   return (
     <GlassCard className="h-full p-6 flex flex-col items-center text-center relative overflow-hidden group">
-      {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,18,18,0)_2px,transparent_2px),linear-gradient(90deg,rgba(18,18,18,0)_2px,transparent_2px)] bg-[size:30px_30px] [background-position:center] opacity-20 pointer-events-none" />
       
-      {/* Status Header */}
       <div className="w-full flex justify-between items-center mb-8 border-b border-white/10 pb-4">
         <span className="text-xs font-mono text-gray-500 tracking-widest">AI_CORE_V2</span>
         <Activity size={14} className={`${mood.color} animate-pulse`} />
       </div>
 
-      {/* Main Avatar */}
       <div className="relative mb-8">
         <div className={`w-32 h-32 rounded-full border-2 border-dashed ${mood.border} flex items-center justify-center animate-[spin_10s_linear_infinite] opacity-30`} />
         <div className={`absolute top-0 left-0 w-32 h-32 rounded-full border border-white/10 flex items-center justify-center animate-[spin_5s_linear_infinite_reverse]`} />
@@ -69,7 +62,6 @@ const CompanionPanel = ({ completionRate = 0, weeklyProgress = 0, weeklyCount = 
       <h3 className={`text-xl font-bold font-mono mb-2 ${mood.color} tracking-tight`}>{mood.msg}</h3>
       <p className="text-gray-400 text-sm font-mono leading-relaxed mb-8">"{mood.sub}"</p>
 
-      {/* Stats Bars */}
       <div className="w-full mt-auto space-y-3">
         <div className="flex justify-between text-xs text-gray-500 font-mono uppercase">
             <span>Daily Logic</span>
@@ -83,7 +75,6 @@ const CompanionPanel = ({ completionRate = 0, weeklyProgress = 0, weeklyCount = 
   );
 };
 
-// --- MODALS (Minified for brevity, functionality unchanged) ---
 const AddHabitModal = ({ isOpen, onClose, onAdd }) => {
   const [text, setText] = useState("");
   if (!isOpen) return null;
@@ -102,7 +93,6 @@ const InteractionModal = ({ isOpen, step, initialText, onCloseModal, onConfirmCh
     return (<div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm"><GlassCard className="p-8 rounded-2xl w-[600px] relative"><button onClick={onCloseModal} className="absolute top-4 right-4 text-gray-500 hover:text-white"><X size={24} /></button>{step === 'ask' && (<><h3 className="text-xl font-bold mb-4 text-white">Add Log Entry?</h3><div className="flex gap-3"><button onClick={onConfirmCheck} className="flex-1 py-3 rounded-lg bg-white/5 text-gray-300">No, Mark Complete</button><button onClick={onSaveNote} className="flex-1 py-3 rounded-lg bg-purple-600/80 text-white">Yes, Add Entry</button></div></>)}{step === 'write' && (<><h3 className="text-2xl font-bold mb-2 text-white font-mono">System Log</h3><textarea autoFocus className="w-full bg-black/50 border border-white/10 rounded-lg p-4 text-gray-300 mb-6 outline-none font-mono" rows={8} value={noteText} onChange={(e) => setNoteText(e.target.value)}/><div className="flex gap-3"><button onClick={() => setNoteText("")} className="px-6 py-3 rounded-lg bg-red-500/10 text-red-400"><Trash2 size={20} /></button><button onClick={() => onSaveNote(noteText)} className="flex-1 py-3 rounded-lg bg-green-600/80 text-white font-bold">Save Entry</button></div></>)}</GlassCard></div>);
 };
 
-// --- MAIN APP ---
 export default function App() {
   const [habits, setHabits] = useState([]);
   const [logs, setLogs] = useState([]);
@@ -191,21 +181,17 @@ export default function App() {
   return (
     <div className="w-full h-screen bg-[#0d1117] text-gray-300 font-sans relative selection:bg-cyan-900/30 overflow-hidden flex flex-col">
       
-      {/* --- TITLE BAR --- */}
       <TitleBar />
 
       <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* MODALS */}
       <ProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} currentGoal={weeklyGoal} onUpdateGoal={handleUpdateGoal} userSettings={userSettings} onUpdateSettings={handleUpdateSettings}/>
       <InteractionModal isOpen={modalOpen} step={modalStep} initialText={currentNote} onCloseModal={() => setModalOpen(false)} onConfirmCheck={() => { submitToggle(activeCell.habitId, activeCell.dateObj, ""); setModalOpen(false); }} onSaveNote={(text) => { if (modalStep === 'ask') setModalStep('write'); else { submitToggle(activeCell.habitId, activeCell.dateObj, text); setModalOpen(false); }}}/>
       <AddHabitModal isOpen={addHabitOpen} onClose={() => setAddHabitOpen(false)} onAdd={handleAddHabit}/>
 
-      {/* CONTENT WRAPPER */}
       <div className="pt-20 w-full h-full flex flex-col p-8">
         
-        {/* HEADER */}
         <header className="w-full flex justify-between items-center mb-8 relative z-10 shrink-0">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2 text-white tracking-tight">
@@ -216,7 +202,6 @@ export default function App() {
 
           <div className="flex gap-4 items-center">
             
-            {/* --- NEW GOAL PILL SECTION --- */}
             <div className="flex items-center gap-3 px-4 py-2 bg-gray-900/60 border border-purple-500/30 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.15)] backdrop-blur-md group hover:border-purple-500/60 transition-colors cursor-default">
                 <TargetLogo />
                 <div className="flex flex-col leading-none">
@@ -233,17 +218,14 @@ export default function App() {
           </div>
         </header>
 
-        {/* NAV BAR */}
         <GlassCard className="w-full flex justify-between items-center mb-4 p-4 rounded-xl relative z-10 shrink-0">
           <button onClick={() => setCurrentDate(subWeeks(currentDate, 1))} className="hover:bg-white/5 p-2 rounded transition-colors text-gray-400 hover:text-white"><ChevronLeft /></button>
           <div className="text-center"><h2 className="text-lg font-bold text-white tracking-wide">{format(startOfCurrentWeek, 'MMM d')} - {format(endOfCurrentWeek, 'MMM d')}</h2></div>
           <button onClick={() => setCurrentDate(addWeeks(currentDate, 1))} className="hover:bg-white/5 p-2 rounded transition-colors text-gray-400 hover:text-white"><ChevronRight /></button>
         </GlassCard>
 
-        {/* --- MAIN SPLIT CONTAINER (Using Grid for stability) --- */}
         <div className="w-full grid grid-cols-[1fr_320px] gap-6 relative z-0 flex-1 overflow-hidden">
           
-          {/* LEFT SIDE: TASKS */}
           <div className="overflow-auto pb-4 scrollbar-hide pr-2">
               <div className="min-w-max">
               <div className="flex mb-2">
@@ -300,7 +282,6 @@ export default function App() {
               </div>
           </div>
 
-          {/* RIGHT SIDE: SIDEBAR (Forced Visible) */}
           <div className="h-full min-w-[320px]">
               <CompanionPanel 
                 completionRate={dailyCompletionRate} 

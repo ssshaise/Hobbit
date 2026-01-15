@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Define the custom colors here instead of tailwind.config.js */
   --color-ca-bg: #10162F;
   --color-ca-card: #151b33;
   --color-ca-border: #3a3f55;
@@ -9,7 +8,6 @@
   --color-ca-text: #E3E3E3;
 }
 
-/* Global Styles */
 :root {
   color-scheme: dark;
 }
@@ -19,7 +17,6 @@ body {
   color: var(--color-ca-text);
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   height: 8px;
   width: 8px;

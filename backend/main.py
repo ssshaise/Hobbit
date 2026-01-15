@@ -16,18 +16,15 @@ if sys.platform == "win32":
     if hWnd:
         user32.ShowWindow(hWnd, 0)
 
-# --- SMART DATABASE CONFIG ---
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./habits.db")
 
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# TWILIO CONFIG
 TWILIO_SID = os.environ.get("TWILIO_SID", "YOUR_SID_HERE")
 TWILIO_AUTH = os.environ.get("TWILIO_AUTH", "YOUR_AUTH_HERE")
 TWILIO_FROM = os.environ.get("TWILIO_FROM", "+1234567890")
 
-# --- DATABASE MODELS ---
 class Habit(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
@@ -50,7 +47,6 @@ class UserSettings(SQLModel, table=True):
     phone_number: Optional[str] = None
     reminders_enabled: bool = False
 
-# --- SETUP ---
 engine = create_engine(DATABASE_URL)
 SQLModel.metadata.create_all(engine)
 app = FastAPI()
@@ -62,7 +58,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- HELPER: SMS ---
 def send_sms(to_number: str, body: str):
     if not TWILIO_SID or "YOUR" in TWILIO_SID:
         print(f"[LOG] SMS to {to_number}: {body}")
@@ -73,7 +68,6 @@ def send_sms(to_number: str, body: str):
     except Exception as e:
         print(f"Twilio Error: {e}")
 
-# --- ENDPOINTS ---
 @app.get("/habits")
 def get_habits():
     with Session(engine) as session:
@@ -182,29 +176,23 @@ def get_month_breakdown(year: int, month: int):
             
         return [{"day": d, "count": c} for d, c in daily_counts.items()]
 
-# --- NEW DELETE ENDPOINT ---
 @app.delete("/habits/{habit_id}")
 def delete_habit(habit_id: int):
     with Session(engine) as session:
-        # 1. Check if habit exists
         habit = session.get(Habit, habit_id)
         if not habit:
             raise HTTPException(status_code=404, detail="Habit not found")
         
-        # 2. Delete all logs associated with this habit first
-        # (Otherwise you get orphaned data or SQL errors)
         statement = select(DailyLog).where(DailyLog.habit_id == habit_id)
         logs = session.exec(statement).all()
         for log in logs:
             session.delete(log)
 
-        # 3. Delete the habit itself
         session.delete(habit)
         session.commit()
         return {"status": "deleted", "id": habit_id}
     
 if __name__ == "__main__":
     import uvicorn
-    # This starts the server automatically on port 8000
     uvicorn.run(app, host="127.0.0.1", port=8000)
     
